@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { Component } from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor () {
+    super();
+
+    this.state = {
+      monsters : [],
+      filteredMonsters: [],
+    }
+  }
+
+
+  componentDidMount () {
+    fetch('https://jsonplaceholder.typicode.com/users').then(response => {
+      response.json().then (res => {
+        this.setState({ 
+          monsters: res,
+          filteredMonsters: this.state.monsters
+        });
+      })
+    })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <input type="text" onChange={(event) => {
+          this.setState({
+            filteredMonsters: this.state.monsters.filter((monster) => {
+              return monster.name.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase())
+            })
+          })
+        }} />
+        {this.state.filteredMonsters.map((monster) =>{
+          return <h1>{monster.name}</h1>
+        })}
+      </div>
+    );
+  }
 }
 
 export default App;
